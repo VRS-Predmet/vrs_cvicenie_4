@@ -64,9 +64,15 @@ int main(void)
   while (1)
   {
 	  /* Periodic transmission of information about DMA Rx buffer state.
-	   * Transmission frequency - 5Hz.
+	   * Transmission frequency - 0.5Hz.
 	   * Message format - "Buffer capacity: %d bytes, occupied memory: %d bytes, load [in %]: %f%"
 	   * Example message (what I wish to see in terminal) - Buffer capacity: 1000 bytes, occupied memory: 231 bytes, load [in %]: 23.1%
+	   */
+
+	  /* Valid text string information transmission.
+	   * Transmission frequency - when new valid string is received.
+	   * Message format - "Valid string: %s, lower-case: %d, upper-case: %d"
+	   * Example message (what I wish to see in terminal) - Valid string: Platn15uborZnakov, lower-case: 13, upper-case: 2
 	   */
 
   	  	  	  //type your code here:
