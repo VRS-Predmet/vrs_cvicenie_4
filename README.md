@@ -1,6 +1,71 @@
 # Náplň cvičenia
+- odovzdávanie zadania 3
+- zoznámenie sa s perifériou USART
+- komunikácia MCU <=> PC
+- funkcia "callback" a jej využitie
 - zoznámenie sa s perifériou DMA
 - prenos dát s USART a DMA
+- predstavenie zadania 4
+
+# Konfigurácia USART
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/VRS-Predmet/vrs_cvicenie_6/master/images/usart_config.PNG" width="850">
+</p>
+
+- na cvičení sa bude využivať periféria USART2: PA2 - Tx, PA15 - Rx
+
+- USART2 treba zapnúť/povoliť v asynchrónnom režime
+
+- v nastavení parametrov nie je potrebné meniť žiaden parameter okrem "Baud rate" (rovnaký musí byť nastavený aj na strane prijímača)
+
+- prijímanie dát bude obslúžené v prerušení - v NVIC je potrebné povoliť prerušenie pre USART2
+
+- vo vygenerovanom kóde je nutné doplniť povolenie prerušenia ak je prijatý znak - USART prerušenie "RXNE"
+
+# Komunikácia s PC
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/VRS-Predmet/vrs_cvicenie_6/master/images/terminal.PNG" width="850">
+</p>
+
+- Nucleo doska ma fyzicky prepojený USART (konkrétne USART2) s ST-LINK/V2-1 a tak vytvára virtuálny COM port. Vďaka tomu dokážeme cez USART posielať dáta priamo do PC bez potreby USB/USART prevodníka (viac info v datasheet pre "STM32 Nucleo-32 boards")
+
+- na strane PC sa môže využiť serial port terminál (PuTTY, Terminal by Br@y ...) s ktorým vieme sledovať komunikáciu na sériovom porte a zároveň posielať dáta
+
+- na strane PC aj MCU je nutné mať nastavený rovnaký "Baud rate"! Taktiež nastavenia ako stop bit, parita ... musia byť rovnako nastavené ak sa náhodou pri konfigurácii MCU menili
+
+# Callback funkcia
+
+- "callback" je časť kódu (funkcia A), ktorá je predaná inej časti kódu (funkcii B) pričom sa očakáva, že funkcia B niekedy naspäť zavolá funkciu A, ktorá jej bola predaná - od toho je aj názov "callback"  
+
+- v jayzku C je "callback" realizovaný ako smerník na funkciu
+
+```python
+void A() 
+{ 
+    printf("I am function A\n"); 
+} 
+  
+void B(void (*ptr)()) 
+{ 
+    (*ptr) (); // callback to A 
+} 
+  
+int main() 
+{ 
+   void (*ptr)() = A; 
+   B(ptr); 
+   
+   return 0; 
+} 
+```
+
+- pri programovaní vnorených systémov sa callback funkcie využívajú na oddelenie aplikačnej časti programu (vyššia úroveň) od hardvérovej časti programu, kde sa konfiguruje MCU (nízka úroveň)
+
+- využitie to má v prípade, ak sa chce FW nejakého typu MCU portovať na iný typ MCU - FW je jednoduchšie prenášaťelný na iné zariadenia, je prehľadnejší a jednoduchší na údržbu
+
+- príklad na callback funkciu je v ukážkovom projekte pre toto cvičenie (obsluhuje prerušenie od USART)
 
 # USART a DMA
 
@@ -36,25 +101,23 @@
 - konfigurácia USART2 sa nelíši od konfigurácie z predchádzajúceho cvičenia
 - V NVIC je potrebné povoliť prerušenia pre DMA(všetky používané kanály) aj USART2
 
-- v ukážkovom kóde je navyše ku vygenerovanému kódu ešte doplňené povolenie konkrétnych prerušení pre DMA a USART (IDLE, HT, TC), priradenie pamäťového miesta pre príjem dát a samotné zapnutie DMA pre obsluhu USART2 Rx a Tx
+- v ukážkovom kóde je navyše ku vygenerovanému kódu ešte doplňené povolenie konkrétnych prerušení pre DMA a USART (IDLE, HT, TC), priradenie pamäťového miesta pre príjem dát a samotné zapnutie DMA pre obsluhu USART2 Rx a Tx 
 
-
-# Zadanie
+# Zadanie 3 (4b)
 - Doimplemetovať chýbajúce častí šablóny programu, vďaka ktorému bude MCU komunikovať s PC prostredníctvom USART2 s využitím DMA.
 - Okrem spracovania prijatých dát bude program pravidelne posielať informácie o aktuálnom vyťažení pamäte, ktorú využíva DMA pre dáta prijaté cez USART.
 - USART komunikácia je obsluhovaná pomocou prerušní HT, TC, IDLE. 
 - K vypracovaniu zadania nie je potrebný žiaden dodatočný HW.
 
 ### Úlohy:
- 1. Stiahnúť/naklonovať vetvu "zadanie_cv7", ktorá predstavuje šablónu projektu, do ktorej je nutné vypracovať nasledujúce úlohy.
- 2. Pre svoje zadanie si vtvoriť vlastný github repozitár, kam sa nahraje stiahnutá šablóná.
+ 1. Naklonovať vetvu "zadanie_cv4", ktorá predstavuje šablónu projektu, do ktorej je nutné vypracovať nasledujúce úlohy.
  
- 3. V súbore "Src/usart.c" doplniť konfiguráciu DMA a USART periferie.
+ 2. V súbore "Src/usart.c" doplniť konfiguráciu DMA a USART periferie (s využitím LL knižnice).
  
- 4. V subore "Src/usart.c" implementovať funkciu pre obsluhu prijimania dát od USART s DMA - "USART2_CheckDmaReception". Funkcia musí správne obslúžiť prijímanie dáť od DMA a ich následné posielanie na spracovanie. Kontrolovať zaplnenosť DMA Rx buffera a zabrániť pretečeniu a strate prijatých dát. Buffer využívaný pre DMA USART Rx sa musí používať v normálnom režime, nie kruhovom. Veľkosť buffera je nastavena na 256 bytov. Predpokladá sa, že vysielacia strana naraz odošle maximálne 20 znakov.
+ 3. V súbore "Src/usart.c" implementovať funkciu pre obsluhu prijimania dát od USART s DMA - "USART2_CheckDmaReception". Funkcia musí správne obslúžiť prijímanie dát od DMA a ich následné posielanie na spracovanie. Kontrolovať zaplnenosť DMA Rx buffera a zabrániť pretečeniu a strate prijatých dát. Buffer využívaný pre DMA USART Rx sa musí používať v normálnom režime, NIE v kruhovom. Veľkosť buffera je nastavena na 128 bytov. Predpokladá sa, že vysielacia strana naraz odošle maximálne 20 znakov.
  
- 5. V subore "Src/main.c" implementovať funkciu "proccesDmaData", ktorá spracuje prijatá dáta. Spracovať znamená, že po prijatí súboru znakov vyhodnotí koľko z prijatých znakov boli malé písmená a koľko boli veľké písmená. Každý súbor znakov, ktorý má byť spracovaný sa musí začínať znakom "#" a končiť znakom "$". To znamená, že platný súbor znaokov, pre ktorý sa vyhodnotí počet malých a veľkých písmen bude vyzerať napríklad ako "#Platn15uborZnakov$". Pokiaľ nie je detegovaný štartovací znak "#", funkcia bude prijaté znaky ignorovať. Ak bol prijatý štartovací znak, súbor znakov bude vyhodnotený až po prijatí ukončovacieho znaku "$". Ak po prijatí štartovacieho znaku nabude počas nasledujúcich 35 znakov prijatý ukončovací znak, prijaté dáta sa zahodia a funkcia bude čakať na nový štartovací znak.
+ 5. V subore "Src/main.c" implementovať funkciu "proccesDmaData", ktorá spracuje prijaté dáta. Spracovať znamená, že po prijatí súboru znakov vyhodnotí koľko z prijatých znakov boli malé písmená a koľko boli veľké písmená. Každý súbor znakov, ktorý má byť spracovaný sa musí začínať znakom "#" a končiť znakom "$". To znamená, že platný súbor znakov, pre ktorý sa vyhodnotí počet malých a veľkých písmen bude vyzerať napríklad ako "#Platn15uborZnakov$". Pokiaľ nie je detegovaný štartovací znak "#", funkcia bude prijaté znaky ignorovať. Ak bol prijatý štartovací znak, súbor znakov bude vyhodnotený až po prijatí ukončovacieho znaku "$". Ak po prijatí štartovacieho znaku nebude počas nasledujúcich 35 znakov prijatý ukončovací znak, prijaté dáta sa zahodia a funkcia bude čakať na nový štartovací znak. Validný prijatý súbor znakov bude odoslaný, ako je špecifikované v komentári vo while slučke.
  
- 6. V subore "Src/main.c" implementovať periodické odosielanie dát o aktuálnom stave DMA Rx buffera cez USART2 do PC. Formát spravý a frekvencia posielania sú špecifikované inštrukciami v komentáry vo while slučke. Implementácia periodického odoielania môže byť priamo vo while slučke poprípade si môžete vytvoriť vlastnú funkciu, ktorú budete vo while slučke volať. V tomto smere máte voľnú ruku. Podstatné je, aby odosielané dáta boli zobraziteľné v PC pomocou terminálu.
+ 6. V subore "Src/main.c" implementovať periodické odosielanie dát o aktuálnom stave DMA Rx buffera cez USART2 do PC. Formát spravý a frekvencia posielania sú špecifikované inštrukciami v komentári vo while slučke. Implementácia periodického odoielania môže byť priamo vo while slučke poprípade si môžete vytvoriť vlastnú funkciu, ktorú budete vo while slučke volať. V tomto smere máte voľnú ruku. Podstatné je, aby odosielané dáta boli zobraziteľné v PC pomocou terminálu.
  
- 7. Odovzdáva sa odkaz k vašemu repozitáru.
+ 7. Odovzdáva sa na začiatku cvičenia 6 a do AIS.
