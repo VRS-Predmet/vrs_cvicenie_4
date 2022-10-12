@@ -1,27 +1,10 @@
 # Náplň cvičenia
 - odovzdávanie zadania 3
-- zoznámenie sa s perifériou USART
 - komunikácia MCU <=> PC
 - funkcia "callback" a jej využitie
-- zoznámenie sa s perifériou DMA
+- zoznámenie sa s perifériou USART a DMA
 - prenos dát s USART a DMA
 - predstavenie zadania 4
-
-# Konfigurácia USART
-
-<p align="center">
-    <img src="https://raw.githubusercontent.com/VRS-Predmet/vrs_cvicenie_6/master/images/usart_config.PNG" width="850">
-</p>
-
-- na cvičení sa bude využivať periféria USART2: PA2 - Tx, PA15 - Rx
-
-- USART2 treba zapnúť/povoliť v asynchrónnom režime
-
-- v nastavení parametrov nie je potrebné meniť žiaden parameter okrem "Baud rate" (rovnaký musí byť nastavený aj na strane prijímača)
-
-- prijímanie dát bude obslúžené v prerušení - v NVIC je potrebné povoliť prerušenie pre USART2
-
-- vo vygenerovanom kóde je nutné doplniť povolenie prerušenia ak je prijatý znak - USART prerušenie "RXNE"
 
 # Komunikácia s PC
 
@@ -34,6 +17,24 @@
 - na strane PC sa môže využiť serial port terminál (PuTTY, Terminal by Br@y ...) s ktorým vieme sledovať komunikáciu na sériovom porte a zároveň posielať dáta
 
 - na strane PC aj MCU je nutné mať nastavený rovnaký "Baud rate"! Taktiež nastavenia ako stop bit, parita ... musia byť rovnako nastavené ak sa náhodou pri konfigurácii MCU menili
+
+### Konfigurácia Putty
+
+<p align="center">
+    <img src="https://github.com/VRS-Predmet/vrs_cvicenie_4/blob/master/images/putty_setup.png" width="850">
+</p>
+
+- Inštalácia Putty
+```sh
+Windows/Ubuntu: "https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html"
+Ubuntu: "sudo apt-get install putty"
+```
+
+- Vypísanie zariadení pripojených ku COM portom (príkaz pre terminál):
+```sh
+Windows: "mode"
+Ubuntu: "dmesg | grep tty"
+```
 
 # Callback funkcia
 
@@ -88,6 +89,16 @@ int main()
 - prerušenia od DMA - HT(half transfer) a TC(transfer complete)
 - prerušenie od USART - IDLE - ak sa zastaví komunikácia po zbernici, po uplinutí času potrebného na prenos jedného znaku sa vyvolá prerušenie
 
+### Konfigurácia USART
+
+<p align="center">
+    <img src="https://raw.githubusercontent.com/VRS-Predmet/vrs_cvicenie_6/master/images/usart_config.PNG" width="850">
+</p>
+
+- na cvičení sa bude využivať periféria USART2: PA2 - Tx, PA15 - Rx
+- USART2 treba zapnúť/povoliť v asynchrónnom režime
+- v nastavení parametrov nie je potrebné meniť žiaden parameter okrem "Baud rate" (rovnaký musí byť nastavený aj na strane prijímača)
+
 ### Konfigurácia DMA
 - prenos dát s DMA je nastavený na Rx aj Tx pričom Rx má rozdielnu konfiguráciu ako Tx
 - smerovanie prenosu dát - periféria -> pamäť pri Rx, pamäť -> periféria pri Tx
@@ -98,12 +109,11 @@ int main()
     <img src="https://github.com/VRS-Predmet/vrs_cvicenie_7/blob/master/images/dma_config1.PNG" width="650">
 </p>
 
-- konfigurácia USART2 sa nelíši od konfigurácie z predchádzajúceho cvičenia
 - V NVIC je potrebné povoliť prerušenia pre DMA(všetky používané kanály) aj USART2
 
 - v ukážkovom kóde je navyše ku vygenerovanému kódu ešte doplňené povolenie konkrétnych prerušení pre DMA a USART (IDLE, HT, TC), priradenie pamäťového miesta pre príjem dát a samotné zapnutie DMA pre obsluhu USART2 Rx a Tx 
 
-# Zadanie 3 (4b)
+# Zadanie 4 (4b)
 - Doimplemetovať chýbajúce častí šablóny programu, vďaka ktorému bude MCU komunikovať s PC prostredníctvom USART2 s využitím DMA.
 - Okrem spracovania prijatých dát bude program pravidelne posielať informácie o aktuálnom vyťažení pamäte, ktorú využíva DMA pre dáta prijaté cez USART.
 - USART komunikácia je obsluhovaná pomocou prerušní HT, TC, IDLE. 
