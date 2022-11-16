@@ -9,7 +9,7 @@
 # Komunikácia s PC
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/VRS-Predmet/vrs_cvicenie_6/master/images/terminal.PNG" width="850">
+    <img src="https://github.com/VRS-Predmet/vrs_cvicenie_4/blob/zadanie_cv4/images/terminal.png" width="850">
 </p>
 
 - Nucleo doska ma fyzicky prepojený USART (konkrétne USART2) s ST-LINK/V2-1 a tak vytvára virtuálny COM port. Vďaka tomu dokážeme cez USART posielať dáta priamo do PC bez potreby USB/USART prevodníka (viac info v datasheet pre "STM32 Nucleo-32 boards")
@@ -21,7 +21,7 @@
 ### Konfigurácia Putty
 
 <p align="center">
-    <img src="https://github.com/VRS-Predmet/vrs_cvicenie_4/blob/master/images/putty_setup.png" width="850">
+    <img src="https://github.com/VRS-Predmet/vrs_cvicenie_4/blob/zadanie_cv4/images/putty_setup.png" width="850">
 </p>
 
 - Inštalácia Putty
@@ -76,7 +76,7 @@ int main()
 - podľa nastavenia makra "POLLING" na "1" alebo "0" sa bude využívať jeden z uvedených spôsobov prenosu dát (makro sa nastavuje vo vlastnosťiach projektu, project->properties)
 
 <p align="center">
-    <img src="https://github.com/VRS-Predmet/vrs_cvicenie_7/blob/master/images/nastavenie_makra.PNG" width="750">
+    <img src="https://github.com/VRS-Predmet/vrs_cvicenie_4/blob/zadanie_cv4/images/nastavenie_makra.PNG" width="750">
 </p>
 
 ### Polling
@@ -92,7 +92,7 @@ int main()
 ### Konfigurácia USART
 
 <p align="center">
-    <img src="https://raw.githubusercontent.com/VRS-Predmet/vrs_cvicenie_6/master/images/usart_config.PNG" width="850">
+    <img src="https://github.com/VRS-Predmet/vrs_cvicenie_4/blob/zadanie_cv4/images/usart_config.png" width="850">
 </p>
 
 - na cvičení sa bude využivať periféria USART2: PA2 - Tx, PA15 - Rx
@@ -106,7 +106,7 @@ int main()
 - pri Tx sa využije normálny mód (normal mode), to znamená, že keď sa dojde na koniec pamäťového miesta, prenos dáť sa ukončí
 
 <p align="center">
-    <img src="https://github.com/VRS-Predmet/vrs_cvicenie_7/blob/master/images/dma_config1.PNG" width="650">
+    <img src="https://github.com/VRS-Predmet/vrs_cvicenie_4/blob/zadanie_cv4/images/dma_config1.PNG" width="650">
 </p>
 
 - V NVIC je potrebné povoliť prerušenia pre DMA(všetky používané kanály) aj USART2
